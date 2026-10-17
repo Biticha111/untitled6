@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference Registration Lab</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            line-height: 1.5;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 500px;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+        fieldset {
+            margin-top: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        .checkbox-label {
+            font-weight: normal;
+            display: inline-block;
+            margin-right: 15px;
+            margin-top: 5px;
+        }
+        button {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #conference-error {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Conference Registration Form</h2>
+    <form id="conference-form">
+
+        <!-- Name -->
+        <label for="name">Name:</label>
+        <input type="text" id="name">
+
+        <!-- Password -->
+        <label for="password">Password:</label>
+        <input type="password" id="password">
+
+        <!-- Email -->
+        <label for="email">Email:</label>
+        <input type="email" id="email">
+
+        <!-- T-Shirt Size -->
+        <label for="tshirt-size">T-Shirt Size:</label>
+        <select id="tshirt-size">
+            <option value="">Select size</option>
+            <option value="S">Small</option>
+            <option value="M">Medium</option>
+            <option value="L">Large</option>
+            <option value="XL">Extra Large</option>
+        </select>
+
+        <!-- Date of Birth -->
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob">
+
+        <!-- Receive Email Updates -->
+        <label style="font-weight: normal; margin-top: 15px;">
+            <input type="checkbox" id="email-updates"> Receive email updates
+        </label>
+
+        <!-- Sessions Attended Checkboxes -->
+        <fieldset>
+            <legend style="font-weight: bold;">Sessions Attended (Select at least one):</legend>
+            <label class="checkbox-label"><input type="checkbox" id="session-morning" value="morning"> Morning</label>
+            <label class="checkbox-label"><input type="checkbox" id="session-afternoon" value="afternoon"> Afternoon</label>
+        </fieldset>
+
+        <!-- Special Requests (Optional) -->
+        <label for="special-requests">Special Requests (Optional):</label>
+        <textarea id="special-requests"></textarea>
+
+        <!-- Error/Success Message Display Container -->
+        <p id="conference-error"></p>
+
+        <!-- Button: type="submit" removed, ID added per instructions -->
+        <button id="register-btn">Register</button>
+    </form>
+</div>
+
+<!-- JavaScript code combined into the same file -->
+<script>
+    // Select the button using its ID
+    const registerButton = document.querySelector('#register-btn')
+
+    // Add a click event listener to process data via JavaScript
+    registerButton.addEventListener('click', function(event) {
+        // Prevent default form submission behavior
+        event.preventDefault()
+
+        // 1. Read all data values from the form elements using their IDs
+        const name = document.querySelector('#name').value.trim()
+        const password = document.querySelector('#password').value.trim()
+        const email = document.querySelector('#email').value.trim()
+        const tShirtSize = document.querySelector('#tshirt-size').value
+        const dateOfBirth = document.querySelector('#dob').value
+        const receiveEmailUpdates = document.querySelector('#email-updates').checked
+
+        // 2. Read checkboxes for sessions attended into an array
+        const sessionsAttended = []
+        const morningCheckbox = document.querySelector('#session-morning')
+        const afternoonCheckbox = document.querySelector('#session-afternoon')
+
+        if (morningCheckbox && morningCheckbox.checked) {
+            sessionsAttended.push("morning")
+        }
+        if (afternoonCheckbox && afternoonCheckbox.checked) {
+            sessionsAttended.push("afternoon")
+        }
+
+        // Optional special requests field (will remain an empty string if blank)
+        const specialRequests = document.querySelector('#special-requests').value.trim()
+        const errorContainer = document.querySelector('#conference-error')
+
+        // Clear previous message states
+        if (errorContainer) {
+            errorContainer.textContent = ""
+            errorContainer.className = ""
+        }
+
+        // 3. Validate form: Ensure all required fields are filled and at least one session is checked
+        if (!name || !password || !email || !tShirtSize || !dateOfBirth || sessionsAttended.length === 0) {
+            const errorMsg = "Error: Please fill out all required fields and select at least one session.";
+            if (errorContainer) {
+                errorContainer.className = "error"
+                errorContainer.textContent = errorMsg
+            } else {
+                alert(errorMsg)
+            }
+            return // Stop code execution if validation fails
+        }
+
+        // 4. Create the final conference registration object matching all required properties
+        const registrationData = {
+            name: name,
+            password: password,
+            email: email,
+            tShirtSize: tShirtSize,
+            dateOfBirth: dateOfBirth,
+            receiveEmailUpdates: receiveEmailUpdates,
+            sessionsAttended: sessionsAttended,
+            specialRequests: specialRequests
+        };
+
+        // 5. Output the object to the developer console
+        console.log("Conference Registration Object:", registrationData);
+
+        // Give visual success feedback on the page UI
+        if (errorContainer) {
+            errorContainer.className = "success"
+            errorContainer.textContent = "Registration successful! Check your browser's developer console to view the object."
+        }
+    })
+</script>
+</body>
+</html>
